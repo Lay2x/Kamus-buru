@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kamus 3 Bahasa</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6C63FF;
+            --secondary: #FF6B6B;
+            --dark: #2C2C2C;
+            --dark-card: #3A3A3A;
+            --light: #F5F5F5;
+            --light-card: #FFFFFF;
+            --text-dark: #F0F0F0;
+            --text-light: #333333;
+            --text-secondary: #B0B0B0;
+            --shadow-dark: 8px 8px 16px #252525, -8px -8px 16px #333333;
+            --shadow-light: 8px 8px 16px #d1d1d1, -8px -8px 16px #ffffff;
+            --shadow-inset-dark: inset 3px 3px 6px #252525, inset -3px -3px 6px #333333;
+            --shadow-inset-light: inset 3px 3px 6px #d1d1d1, inset -3px -3px 6px #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--dark);
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        body.light {
+            background-color: var(--light);
+            color: var(--text-light);
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        body.light header {
+            border-bottom-color: rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .theme-switcher {
+            background: var(--dark-card);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-dark);
+            transition: all 0.3s ease;
+        }
+
+        body.light .theme-switcher {
+            background: var(--light-card);
+            box-shadow: var(--shadow-light);
+        }
+
+        .search-container {
+            background: var(--dark);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow-dark);
+            transition: all 0.3s ease;
+        }
+
+        body.light .search-container {
+            background: var(--light);
+            box-shadow: var(--shadow-light);
+        }
+
+        .search-box {
+            display: flex;
+            background: var(--dark-card);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-inset-dark);
+            transition: all 0.3s ease;
+        }
+
+        body.light .search-box {
+            background: var(--light-card);
+            box-shadow: var(--shadow-inset-light);
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 18px;
+            background: transparent;
+            border: none;
+            color: var(--text-dark);
+            font-size: 1rem;
+            outline: none;
+        }
+
+        body.light .search-box input {
+            color: var(--text-light);
+        }
+
+        .search-box input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        .search-box button {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 0 25px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .language-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .language-tab {
+            flex: 1;
+            background: var(--dark-card);
+            border: none;
+            color: var(--text-dark);
+            padding: 12px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: var(--shadow-dark);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        body.light .language-tab {
+            background: var(--light-card);
+            color: var(--text-light);
+            box-shadow: var(--shadow-light);
+        }
+
+        .language-tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
+            color: white;
+        }
+
+        .result-card {
+            background: var(--dark-card);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 20px;
+            box-shadow: var(--shadow-dark);
+            animation: fadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        body.light .result-card {
+            background: var(--light-card);
+            box-shadow: var(--shadow-light);
+        }
+
+        .not-found-card {
+            background: var(--dark-card);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 20px;
+            box-shadow: var(--shadow-dark);
+            animation: fadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        body.light .not-found-card {
+            background: var(--light-card);
+            box-shadow: var(--shadow-light);
+        }
+        
+        .not-found-icon {
+            font-size: 2.5rem;
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+        
+        .not-found-text {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+        }
+        
+        body.light .not-found-text {
+            color: var(--text-light);
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .close-btn {
+            background: rgba(255,255,255,0.1);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-dark);
+        }
+
+        body.light .close-btn {
+            color: var(--text-light);
+            background: rgba(0,0,0,0.05);
+        }
+
+        .close-btn:hover {
+            background: rgba(255,0,0,0.2);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-word {
+            font-size: 2rem;
+            color: var(--text-dark);
+            font-weight: 700;
+        }
+
+        body.light .result-word {
+            color: var(--text-light);
+        }
+
+        .speaker-btn {
+            background: rgba(255,255,255,0.1);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+        }
+
+        body.light .speaker-btn {
+            background: rgba(0,0,0,0.05);
+        }
+
+        .translation-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        body.light .translation-item {
+            border-bottom-color: rgba(0,0,0,0.05);
+        }
+
+        .translation-content {
+            flex: 1;
+        }
+
+        .language-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .translation-text {
+            font-size: 1.2rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--text-secondary);
+        }
+
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 6px 20px rgba(108, 99, 255, 0.4);
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .fab:active {
+            transform: scale(0.9);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Kamus 3 Bahasa</h1>
+            <div class="theme-switcher" id="themeSwitcher">
+                <i class="fas fa-moon"></i>
+            </div>
+        </header>
+        
+        <div class="search-container">
+            <div class="language-tabs">
+                <button class="language-tab active" data-lang="indonesia">
+                    <i class="fas fa-flag"></i> ID
+                </button>
+                <button class="language-tab" data-lang="english">
+                    <i class="fas fa-language"></i> EN
+                </button>
+                <button class="language-tab" data-lang="buru">
+                    <i class="fas fa-globe-asia"></i> BR
+                </button>
+            </div>
+            
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Cari kata...">
+                <button id="searchBtn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div id="emptyState" class="empty-state">
+            <i class="fas fa-search" style="font-size: 3rem; opacity: 0.3; margin-bottom: 15px;"></i>
+            <p>Ketikan kata untuk memulai pencarian</p>
+        </div>
+        
+        <div id="notFoundCard" class="not-found-card" style="display: none;">
+            <div class="not-found-icon">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <div class="not-found-text" id="notFoundText">
+                Kata tidak ditemukan!
+            </div>
+        </div>
+        
+        <div id="resultCard" class="result-card" style="display: none;">
+            <div class="result-header">
+                <div class="result-word" id="resultWord">Air</div>
+                <div class="result-actions">
+                    <div class="close-btn" id="closeBtn">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="translation-item">
+                <div class="translation-content">
+                    <div class="language-label">
+                        <i class="fas fa-flag"></i> Indonesia
+                    </div>
+                    <div class="translation-text">
+                        <span id="translationId">air</span>
+                        <div class="speaker-btn" data-lang="id-ID" data-word="air">
+                            <i class="fas fa-volume-up"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="translation-item">
+                <div class="translation-content">
+                    <div class="language-label">
+                        <i class="fas fa-language"></i> English
+                    </div>
+                    <div class="translation-text">
+                        <span id="translationEn">water</span>
+                        <div class="speaker-btn" data-lang="en-US" data-word="water">
+                            <i class="fas fa-volume-up"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="translation-item">
+                <div class="translation-content">
+                    <div class="language-label">
+                        <i class="fas fa-globe-asia"></i> Buru
+                    </div>
+                    <div class="translation-text">
+                        <span id="translationBr">wae</span>
+                        <div class="speaker-btn" data-lang="id-ID" data-word="wae">
+                            <i class="fas fa-volume-up"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fab" id="addWordBtn">
+        <i class="fas fa-plus"></i>
+    </div>
+
+    <script>
+        // Enhanced Dictionary
+        const dictionary = [
+            { indonesia: "air", english: "water", buru: "wae" },
+            { indonesia: "api", english: "fire", buru: "afi" },
+            { indonesia: "matahari", english: "sun", buru: "ren" },
+            { indonesia: "ibu", english: "mother", buru: "ina" },
+            { indonesia: "ayah", english: "father", buru: "ama" },
+            { indonesia: "rumah", english: "house", buru: "uma" },
+            { indonesia: "makan", english: "eat", buru: "kan" },
+            { indonesia: "tidur", english: "sleep", buru: "meti" },
+            { indonesia: "aku", english: "I", buru: "beta" },
+            { indonesia: "kamu", english: "you", buru: "ose" },
+            { indonesia: "dia", english: "he/she", buru: "dia" }
+        ];
+
+        let currentLang = 'indonesia';
+        let isDarkMode = true;
+        
+        // DOM Elements
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const langTabs = document.querySelectorAll('.language-tab');
+        const resultCard = document.getElementById('resultCard');
+        const notFoundCard = document.getElementById('notFoundCard');
+        const emptyState = document.getElementById('emptyState');
+        const closeBtn = document.getElementById('closeBtn');
+        const addWordBtn = document.getElementById('addWordBtn');
+        const themeSwitcher = document.getElementById('themeSwitcher');
+        
+        // Initialize SpeechSynthesis
+        const synth = window.speechSynthesis;
+        
+        // Event Listeners
+        langTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                langTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentLang = tab.dataset.lang;
+                updatePlaceholder();
+            });
+        });
+        
+        searchBtn.addEventListener('click', searchWord);
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') searchWord();
+        });
+        
+        closeBtn.addEventListener('click', closeResult);
+        addWordBtn.addEventListener('click', showAddWordModal);
+        themeSwitcher.addEventListener('click', toggleTheme);
+        
+        // Functions
+        function updatePlaceholder() {
+            const placeholders = {
+                'indonesia': 'Cari kata...',
+                'english': 'Search word...',
+                'buru': 'Fano kata...'
+            };
+            searchInput.placeholder = placeholders[currentLang];
+        }
+        
+        function searchWord() {
+            const query = searchInput.value.trim().toLowerCase();
+            if (!query) return;
+            
+            const result = dictionary.find(item => 
+                item[currentLang].toLowerCase() === query
+            );
+            
+            // Hide all cards first
+            emptyState.style.display = 'none';
+            resultCard.style.display = 'none';
+            notFoundCard.style.display = 'none';
+            
+            if (result) {
+                document.getElementById('resultWord').textContent = result[currentLang];
+                document.getElementById('translationId').textContent = result.indonesia;
+                document.getElementById('translationEn').textContent = result.english;
+                document.getElementById('translationBr').textContent = result.buru;
+                
+                // Update speaker buttons data attributes
+                document.querySelectorAll('.translation-item .speaker-btn')[0].setAttribute('data-word', result.indonesia);
+                document.querySelectorAll('.translation-item .speaker-btn')[1].setAttribute('data-word', result.english);
+                document.querySelectorAll('.translation-item .speaker-btn')[2].setAttribute('data-word', result.buru);
+                
+                resultCard.style.display = 'block';
+            } else {
+                document.getElementById('notFoundText').textContent = 
+                    currentLang === 'indonesia' ? 'Kata tidak ditemukan!' :
+                    currentLang === 'english' ? 'Word not found!' :
+                    'Fano la temo!';
+                notFoundCard.style.display = 'block';
+            }
+        }
+        
+        function speakWord(word, lang) {
+            if (synth.speaking) {
+                synth.cancel();
+            }
+            
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = lang;
+            
+            synth.speak(utterance);
+            
+            // Add animation to the clicked button
+            const btn = event.currentTarget;
+            btn.innerHTML = '<i class="fas fa-volume-up"></i>';
+            btn.style.background = 'rgba(108, 99, 255, 0.3)';
+            setTimeout(() => {
+                btn.style.background = isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
+            }, 500);
+        }
+        
+        function closeResult() {
+            resultCard.style.display = 'none';
+            notFoundCard.style.display = 'none';
+            emptyState.style.display = 'block';
+            searchInput.value = '';
+            searchInput.focus();
+        }
+        
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('light');
+            
+            themeSwitcher.innerHTML = isDarkMode ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+            
+            // Save preference to localStorage
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+        }
+        
+        function showAddWordModal() {
+            alert("Fitur tambah kata akan dikembangkan!\nSementara edit langsung di array dictionary.");
+        }
+        
+        // Initialize
+        updatePlaceholder();
+        
+        // Load theme preference
+        if (localStorage.getItem('theme') === 'light') {
+            toggleTheme();
+        }
+        
+        // Add event listeners to all speaker buttons
+        document.addEventListener('click', function(event) {
+            if (event.target.closest('.speaker-btn')) {
+                const btn = event.target.closest('.speaker-btn');
+                const word = btn.getAttribute('data-word');
+                const lang = btn.getAttribute('data-lang');
+                speakWord(word, lang);
+            }
+        });
+        
+        // Load voices when available
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = function() {
+                console.log("Voices loaded");
+            };
+        }
+    </script>
+</body>
+</html>
